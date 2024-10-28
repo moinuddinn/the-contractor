@@ -16,9 +16,6 @@ const profileSchema = new mongoose.Schema({
 		type: Number,
 		trim: true,
 	},
-    image: {
-        type: String,
-    },
 });
 
 
