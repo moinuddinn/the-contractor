@@ -1,7 +1,48 @@
+require('dotenv').config();
+
 const express = require('express');
 const Staff = require('../../models/staff/staff')
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Redis = require('ioredis');
+
+const redis = new Redis(process.env.REDIS_URL);
+
+const generateToken=(userId)=>{
+
+    const accessToken=jwt.sign({userId},process.env.JWT_SECRET,{expiresIn:"15m"});
+    const refreshToken=jwt.sign({userId},process.env.JWT_SECRET,{expiresIn:"7d"});
+
+    return {accessToken,refreshToken};
+}
+
+const storeRefreshToken=async(userId,refreshToken)=>{
+    try {
+
+        await redis.set(`refresh_token:${userId}`, refreshToken, 'EX', 7 * 24 * 60 * 60);
+        console.log('Refresh token stored successfully');
+    } catch (error) {
+        console.error('Error storing refresh token:', error);
+    }
+}
+
+const setCookies=(res,accessToken,refreshToken)=>{
+    res.cookie("accessToken",accessToken,{
+        httpOnly:true,
+        secure:process.env.NODE_ENV==="production",
+        sameSite:"strict",
+        maxAge:15*60*1000,
+    })
+
+    res.cookie("refreshToken",refreshToken,{
+        httpOnly:true,
+        secure:process.env.NODE_ENV==="production",
+        sameSite:"strict",
+        maxAge:15*60*1000,
+    })
+
+}
+
 
 const signup=async (req,res)=>{
 
@@ -13,16 +54,18 @@ const signup=async (req,res)=>{
         if(staffMatch){
             return res.status(500).json({message:"Staff Already exist"});
         }
-        const hashedpassword = await bcryptjs.hash(password,10);
         const response = {
                 name,
-                password:hashedpassword,
+                password,
                 role
             }
         
+        const newStaff = await Staff.create(response);
+        const{accessToken,refreshToken} = generateToken(newStaff._id);
+        await storeRefreshToken(newStaff._id,refreshToken);    
+        
+        setCookies(res,accessToken,refreshToken);
 
-        const newStaff = new Staff(response)
-        await newStaff.save();
         res.status(201).json(newStaff);
     }catch(error){
         console.log(error)
@@ -52,7 +95,7 @@ const login = async (req,res)=>{
         const token = await jwt.sign({staffId:staffExist._id,role:staffExist.role},process.env.JWT_SECRET,{expiresIn:"24h"})
         staffExist.token = token;
         await staffExist.save();
-
+        
         const response = {
             name,password,token,role,Id
         }
@@ -63,19 +106,18 @@ const login = async (req,res)=>{
 }
 
 const logout = async (req,res)=>{
-
-   const {staffId} = req.body; 
-
    try {
-    console.log(staffId)
-    const staffExist = await Staff.findById(staffId);
-    if(!staffExist){
-        return res.status(400).json({message:"Logout failed"})
-    }
-    staffExist.token=null;
-    await staffExist.save();
+    const refreshToken = req.cookies.refreshToken;
 
-    res.send("Logged out successfully")
+    if (refreshToken) {
+        const decoded = jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET);
+        await redis.del(`refresh token :${decoded.userId}`);
+    }
+
+     res.clearCookie("accessToken");
+     res.clearCookie("refreshToken");
+
+     res.json({message:"Logged out successfully"})
 } catch(error) {
     res.status(500).json({message:"Error logging out"})
    }

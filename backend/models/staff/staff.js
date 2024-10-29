@@ -1,5 +1,6 @@
 // Import the Mongoose library
 const mongoose = require("mongoose");
+const bcryptjs = require('bcryptjs');
 
 const staffSchema = new mongoose.Schema(
 	{
@@ -38,6 +39,24 @@ const staffSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
+
+//pre-save hooks to hash password before saving to database
+
+staffSchema.pre('save',async function(next){
+    if(!this.isModified("password")) return next();
+
+    try {
+        const salt = await bcryptjs.genSalt(10);
+        this.password = await bcryptjs.hash(this.password,salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
+})  
+
+staffSchema.methods.comparePassword =async function(password){
+    return bcryptjs.compare(password,this.password);
+}
 
 // Export the Mongoose model for the user schema, using the name "user"
 module.exports = mongoose.model("Staff", staffSchema);
