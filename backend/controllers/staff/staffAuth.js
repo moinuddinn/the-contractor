@@ -91,14 +91,27 @@ const login = async (req,res)=>{
             return res.status(400).json({message:"Invalid username or password"})
         }
 
-        //Generate jwt
-        const token = await jwt.sign({staffId:staffExist._id,role:staffExist.role},process.env.JWT_SECRET,{expiresIn:"24h"})
-        staffExist.token = token;
-        await staffExist.save();
+         // Generate access and refresh tokens
+         const { accessToken, refreshToken } = generateToken(staffExist._id);
+
+         // Store refresh token in Redis
+         await storeRefreshToken(staffExist._id, refreshToken);
+ 
+         // Set cookies with the tokens
+         setCookies(res, accessToken, refreshToken);
+ 
+         // Update staff record with the new access token
+         staffExist.token = accessToken;
+         await staffExist.save();
         
+        // Prepare response with key details
         const response = {
-            name,password,token,role,Id
-        }
+            name,
+            role,
+            Id,
+            token: accessToken,
+        };
+
         res.status(200).json(response);
     } catch (error) {
         res.status(500).send(error)
@@ -106,6 +119,7 @@ const login = async (req,res)=>{
 }
 
 const logout = async (req,res)=>{
+    
    try {
     const refreshToken = req.cookies.refreshToken;
 
