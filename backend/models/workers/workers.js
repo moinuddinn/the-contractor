@@ -8,37 +8,44 @@ const staffSchema = new mongoose.Schema(
 			required: true,
 			trim: true,
 		},
-	
-		password: {
+		father: {
 			type: String,
-			required: true,
+			trim: true,
 		},
-		// Define the role field with type String and enum values of "Admin", "Student", or "Visitor"
-		role: {
+
+		aadharNumber: {
+			type: Number,
+			trim: true,
+		},
+		panCardNumber: {
 			type: String,
-			enum: ["Admin", "Supervisor",],
-			required: true,
+			trim: true,
 		},
-		active: {
-			type: Boolean,
-			default: true,
-		},
-		approved: {
-			type: Boolean,
-			default: true,
-		},
-		additionalDetails: {
-			type: mongoose.Schema.Types.ObjectId,
-			required: true,
-			ref: "Profile",
-		},
-		token: {
-			type: String,
-		}
-		// Add timestamps for when the document is created and last modified
+		bank: {
+			accountNumber: {
+			  type: String,
+			},
+			ifscCode: {
+			  type: String,
+			},
+			bankName: {
+			  type: String,
+			},
+			branch: {
+			  type: String,
+			}
+		  },
+		attendanceRecords: [{
+			type:mongoose.Schema.Types.ObjectId,
+			ref:'Attendance'
+		}],
+		paymentRecords:[{
+			type:mongoose.Schema.Types.ObjectId,
+			ref:'Payment'
+		}],  
 	},
 	{ timestamps: true }
 );
 
 // Export the Mongoose model for the user schema, using the name "user"
-module.exports = mongoose.model("Staff", userSchema);
+module.exports = mongoose.model("Worker", userSchema);

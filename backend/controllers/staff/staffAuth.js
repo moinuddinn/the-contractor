@@ -79,9 +79,8 @@ const login = async (req,res)=>{
 
     try {
         const staffExist = await Staff.findOne({name})
-        
         if(!staffExist){
-            return res.status(400).json({message:"Invalid username or password"})
+            return res.status(400).json({message:"Invalid staff"})
         }
         const role = staffExist.role;
         const Id = staffExist._id;
