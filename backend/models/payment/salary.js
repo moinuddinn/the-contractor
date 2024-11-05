@@ -1,15 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const salarySchema = new Schema({
-    worker:{type:Schema.Types.ObjectId,ref:'Worker'},
-
-    date:{type:String},
-
-    amount:{type:String,required:true},
-    type:{type:String, default:'Salary'},
-    createdAt:{type:Date , default : Date.now},
-
+const salarySchema = new mongoose.Schema({
+  workerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Worker', required: true }, // workerSchemaRelation
+  paymentDate: { type: Date, required: true },
+  amount: { type: Number, required: true },
+  createdAt: { type: Date, default: Date.now },
+  type: { type: String} // Specify type as needed (e.g., "advance", etc.)
 });
 
-const Salary = mongoose.model('Salary',salarySchema);
-module.exports = Salary;
+module.exports = mongoose.model('Salary', salarySchema);

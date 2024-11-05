@@ -1,14 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const prevadvanceSchema = new Schema({
-    worker:{type:Schema.Types.ObjectId,ref:'Worker'},
-
-    date:{type:String},
-    amount:{type:String,required:true},
-    type:{type:String, default:'Previous Advance'},
-    createdAt:{type:Date , default : Date.now},
-
+const prevadvanceSchema = new mongoose.Schema({
+  workerID: { type: mongoose.Schema.Types.ObjectId, ref: 'Worker'}, // workerSchemaRelation
+  paymentDate: { type: Date, required: true },
+  amount: { type: Number, required: true },
+  createdAt: { type: Date, default: Date.now },
+  type: { type: String } // Specify type as needed (e.g., "advance", etc.)
 });
 
-const PreAdvance = mongoose.model('PrevAdvance',prevadvanceSchema);
-module.exports = PreAdvance;
+module.exports = mongoose.model('PrevAdvance', prevadvanceSchema);

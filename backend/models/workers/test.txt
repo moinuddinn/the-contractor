@@ -1,0 +1,57 @@
+        name: 'Jane Smith',
+        phone: 73827392,
+        attendance: [
+            { shift:'day', point:'veg' },
+            { shift:'night', point:'meat' }
+            { shift:'day', point:'veg' }
+            { shift:'night', point:'non-veg' }
+        ],
+        paymentRecords :[{
+            prevAdvances: [
+                { amount: 300, paymentDate: new Date('2023-09-01'), type:'PrevAdvance' },
+                { amount: 500, paymentDate: new Date('2023-09-01'), type:'PrevAdvance' },
+                { amount: 600, paymentDate: new Date('2023-09-01'), type:'PrevAdvance' },
+            ],
+            salaries: [
+                { amount: 200, paymentDate: new Date('2023-11-01'), type:'salary' },
+                { amount: 20, paymentDate: new Date('2023-11-04'), type:'salary' },
+                { amount: 600, paymentDate: new Date('2023-10-10'), type:'salary' },
+                { amount: 100, paymentDate: new Date('2023-04-01'), type:'salary' },
+            ],
+            advances: [
+                { amount: 2500, paymentDate: new Date('2023-11-01'), type:'advances' },
+                { amount: 300, paymentDate: new Date('2023-11-02'), type:'advances' },
+                { amount: 100, paymentDate: new Date('2023-11-05'), type:'advances' }
+            ]
+        }]
+       
+or should i maintain payment schema like this 
+
+name: 'Jane Smith',
+phone: 73827392,
+attendance: [
+    { shift:'day', point:'veg' },
+    { shift:'night', point:'meat' }
+    { shift:'day', point:'veg' }
+    { shift:'night', point:'non-veg' }
+],
+paymentRecords :[
+        { amount: 300, paymentDate: new Date('2023-09-01'), type:'PrevAdvance' },
+        { amount: 200, paymentDate: new Date('2023-11-01'), type:'salary' },
+        { amount: 20, paymentDate: new Date('2023-11-04'), type:'salary' },
+
+
+        { amount: 2500, paymentDate: new Date('2023-11-01'), type:'advances' },
+        { amount: 300, paymentDate: new Date('2023-11-02'), type:'advances' },
+        { amount: 100, paymentDate: new Date('2023-11-05'), type:'advances' }
+    ]
+
+
+
+
+
+
+
+
+
+

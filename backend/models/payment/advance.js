@@ -1,15 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const advanceSchema = new Schema({
-    worker:{type:Schema.Types.ObjectId,ref:'Worker'},
-
-    date:{type:String},
-
-    amount:{type:String,required:true},
-    type:{type:String, default:'Advance'},
-    createdAt:{type:Date , default : Date.now},
-
+const advanceSchema = new mongoose.Schema({
+  workerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Worker' }, // workerSchemaRelation
+  paymentDate: { type: Date, required: true },
+  amount: { type: Number, required: true },
+  createdAt: { type: Date, default: Date.now },
+  type: { type: String } // Specify type as needed (e.g., "advance", etc.)
 });
 
-const Advance = mongoose.model('Advance',advanceSchema);
-module.exports = Advance;
+module.exports = mongoose.model('Advance', advanceSchema);

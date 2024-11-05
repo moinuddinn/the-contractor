@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 
+const Schema = mongoose.Schema;
+
 const attendanceSchema = new Schema({
-    worker:{type:Schema.Types.ObjectId,ref:'Worker'},
+    workerId:{type:Schema.Types.ObjectId,ref:'Worker'},
 
     shift:{type:String, enum: ['day', 'night'], required:true},
 

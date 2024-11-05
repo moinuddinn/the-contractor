@@ -1,7 +1,7 @@
 // Import the Mongoose library
 const mongoose = require("mongoose");
 
-const staffSchema = new mongoose.Schema(
+const workerschema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
@@ -39,13 +39,21 @@ const staffSchema = new mongoose.Schema(
 			type:mongoose.Schema.Types.ObjectId,
 			ref:'Attendance'
 		}],
-		paymentRecords:[{
+		advanceRecords:[{
 			type:mongoose.Schema.Types.ObjectId,
-			ref:'Payment'
+			ref:'Advance'
 		}],  
+		prevadvancerecords:[{
+			type:mongoose.Schema.Types.ObjectId,
+			ref:'PrevAdvance'
+		}],
+		SalaryRecords:[{
+			type:mongoose.Schema.Types.ObjectId,
+			ref:'Salary'
+		}]
 	},
 	{ timestamps: true }
 );
 
 // Export the Mongoose model for the user schema, using the name "user"
-module.exports = mongoose.model("Worker", userSchema);
+module.exports = mongoose.model("Worker", workerschema);
